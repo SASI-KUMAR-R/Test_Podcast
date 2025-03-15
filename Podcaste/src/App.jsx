@@ -6,11 +6,13 @@ import Pod from "./Components/FunctionComponents/Pod";
 import Detail from "./Components/FunctionComponents/Detail";
 import ANNOUNCEMENT from "./Components/FunctionComponents/IMP";
 import YourLibraryHome from "./Components/FunctionComponents/YourLibraryHome";
-import AddPodcast from"./Components/FunctionComponents/AddPodcast";
+import AddPodcast from "./Components/FunctionComponents/AddPodcast";
 import DeletePodcast from "./Components/FunctionComponents/DeletePodcast";
+import { UserProvider } from "./Components/FunctionComponents/UserContext";
+
 function App() {
   return (
-    <div>
+    <UserProvider> 
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -24,7 +26,7 @@ function App() {
           <Route path="/deletepod" element={<DeletePodcast />} />
         </Routes>
       </BrowserRouter>
-    </div>
+    </UserProvider>
   );
 }
 

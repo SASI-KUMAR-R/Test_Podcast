@@ -1,27 +1,29 @@
 import React, { useState } from "react";
 import "../CSS/Login.css";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useUser } from "../FunctionComponents/UserContext";  
 
 const Login = () => {
   const [emailid, setemailid] = useState("");
   const [password, setpassword] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useUser(); 
 
   const handlepage = async (event) => {
     event.preventDefault();
     try {
       const response = await axios.post("https://test-podcast.onrender.com/login", {
-        emailid: emailid,
-        password: password,
+        emailid,
+        password,
       });
 
-      const message = response.data.message;
-      const isLogin = response.data.isLogin;
-      alert(message);
-      if (isLogin) {
+      if (response.data.isLogin) {
+        alert(response.data.message);
+        setUser({ userid: response.data.userid }); 
         navigate("/Home");
+      } else {
+        alert("Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Error logging in:", error);

@@ -1,35 +1,63 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useUser } from "../FunctionComponents/UserContext";  
 import "../CSS/AddPodcast.css";
 
 function AddPodcast() {
+  const { user } = useUser(); 
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
+  const [audio, setAudio] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setMessage("");
 
-    const formData = new FormData(event.target);
+    if (!title || !description || !image || !audio) {
+      setMessage("All fields are required.");
+      setLoading(false);
+      return;
+    }
+
+    if (!user?.userid) {
+      setMessage("User ID not found. Please log in again.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch("https://test-podcast.onrender.com/addpodcast", {
-        method: "POST",
-        body: formData,
-      });
+      const formData = new FormData();
+      formData.append("userid", String(user.userid));  
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("image", image);
+      formData.append("audio", audio);
 
-      const result = await response.json();
-      setLoading(false);
+      const response = await axios.post(
+        "https://test-podcast.onrender.com/addpodcast",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-      if (result.success) {
-        alert("Podcast added successfully!");
-        event.target.reset(); 
+      if (response.data.success) {
+        setMessage(" Podcast added successfully!");
+        setTitle("");  
+        setDescription("");
+        setImage(null);
+        setAudio(null);
       } else {
-        alert("Failed to add podcast!");
+        setMessage("Failed to add podcast.");
       }
     } catch (error) {
-      setLoading(false);
       console.error("Error uploading podcast:", error);
-      alert("An error occurred. Please try again.");
+      setMessage(" Error uploading podcast. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,17 +68,39 @@ function AddPodcast() {
 
         <form onSubmit={handleSubmit}>
           <div className="inputdiv">
-            <label htmlFor="title">Name Of Podcast:</label>
-            <input type="text" name="title" placeholder="Enter the Name..." required />
+            <label>Name Of Podcast:</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter the Name..."
+              required
+            />
 
-            <label htmlFor="description">Description:</label>
-            <input type="text" name="description" placeholder="Enter Description Of Podcast.." required />
+            <label>Description:</label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter Description Of Podcast.."
+              required
+            />
 
-            <label htmlFor="image">Upload Image:</label>
-            <input type="file" accept="image/*" name="image" required />
+            <label>Upload Image:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              required
+            />
 
-            <label htmlFor="audio">Upload Audio:</label>
-            <input type="file" name="audio" accept="audio/*" required />
+            <label>Upload Audio:</label>
+            <input
+              type="file"
+              accept="audio/*"
+              onChange={(e) => setAudio(e.target.files[0])}
+              required
+            />
 
             <br />
             <button type="submit" className="signuptag" disabled={loading}>
@@ -58,6 +108,8 @@ function AddPodcast() {
             </button>
           </div>
         </form>
+
+        {message && <p className="message">{message}</p>}
 
         <div className="logindiv">
           <Link to="/libhome" className="Linktag">
