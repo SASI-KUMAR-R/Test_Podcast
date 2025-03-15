@@ -44,3 +44,9 @@ label{
   width: 100px;
   left: 125px;
 }
+
+.messagepodcast{
+  position: relative;
+  left: 90px;
+  color: white;
+}

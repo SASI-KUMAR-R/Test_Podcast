@@ -109,7 +109,7 @@ function AddPodcast() {
           </div>
         </form>
 
-        {message && <p className="message">{message}</p>}
+        {message && <p className="messagepodcast">{message}</p>}
 
         <div className="logindiv">
           <Link to="/libhome" className="Linktag">
