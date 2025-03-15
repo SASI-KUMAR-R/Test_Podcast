@@ -8,15 +8,12 @@ const multer = require("multer");
 const app = express();
 const port = 3001;
 
-
 app.use(cors());
 dotenv.config();
 app.use(express.json());
 
-
 const Signup = require("./Models/SignUpSchema");
 const Podcast = require("./Models/PodcastDetails");
-
 
 mdb
   .connect(process.env.MONGODB_URL)
@@ -27,7 +24,6 @@ mdb
     console.error("DATABASE CONNECTION ERROR:", error);
   });
 
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -36,7 +32,7 @@ app.post("/signup", async (req, res) => {
   try {
     const { username, emailid, password, phonenumber } = req.body;
 
-    
+    // Hash the password
     const hashedPass = await bcrypt.hash(password, 10);
 
     const newSignup = new Signup({
@@ -55,7 +51,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// ---------------- LOGIN ROUTE ----------------
+// ---------------- LOGIN ROUTE (Returns userid) ----------------
 app.post("/login", async (req, res) => {
   try {
     const { emailid, password } = req.body;
@@ -68,7 +64,11 @@ app.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       console.log("LOGIN SUCCESS");
-      return res.status(200).json({ message: "LOGIN SUCCESS", isLogin: true });
+      return res.status(200).json({ 
+        message: "LOGIN SUCCESS", 
+        isLogin: true, 
+        userid: user._id  // ✅ Send userid to frontend
+      });
     } else {
       return res.status(400).json({ message: "INVALID PASSWORD", isLogin: false });
     }
@@ -86,28 +86,14 @@ app.post(
     try {
       const { userid, title, description } = req.body;
 
-      
-      if (!req.files || !req.files["image"] || !req.files["audio"]) {
-        return res.status(400).json({ message: "Image and Audio are required" });
+      if (!userid || !title || !description || !req.files["image"] || !req.files["audio"]) {
+        return res.status(400).json({ message: "All fields are required", success: false });
       }
 
-      
       const image = req.files["image"][0].buffer.toString("base64");
       const audio = req.files["audio"][0].buffer.toString("base64");
 
-      
-      const userExists = await Signup.findById(userid);
-      if (!userExists) {
-        return res.status(400).json({ message: "User not found" });
-      }
-
-      const newPodcast = new Podcast({
-        userid,
-        title,
-        description,
-        image,
-        audio,
-      });
+      const newPodcast = new Podcast({ userid, title, description, image, audio });
 
       await newPodcast.save();
       console.log("PODCAST ADDED SUCCESSFULLY");
@@ -145,4 +131,5 @@ app.get("/getAllPodcasts", async (req, res) => {
   }
 });
 
+// ---------------- SERVER LISTENING ----------------
 app.listen(port, () => console.log(`Server started on port ${port}`));
