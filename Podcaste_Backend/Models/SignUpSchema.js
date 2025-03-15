@@ -3,7 +3,7 @@ const SignUpSchema = mdb.Schema({
   username: String,
   emailid: String,
   password: String,
-  phonenumber: String
+  phonenumber: String,
 });
 
 const signupschema = mdb.model("SIGNUPMAIN", SignUpSchema);

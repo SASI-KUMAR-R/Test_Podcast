@@ -15,7 +15,7 @@ function YourLibraryHome() {
         </div>
         <div className="deletepodcast">
           <h1>
-            <Link to="/addpod" className="lokshaa2">DELETE YOUR PODCAST</Link>
+            <Link to="/deletepod" className="lokshaa2">DELETE YOUR PODCAST</Link>
           </h1>
         </div>
       </div>

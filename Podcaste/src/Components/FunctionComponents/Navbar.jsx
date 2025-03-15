@@ -29,7 +29,7 @@ function Navbar({ searchTerm, setSearchTerm }) {
           <button className="buttonstyle2" onClick={() => navigate("/")}>
             <ShinyText
               text="LOG OUT"
-              disabled={false}
+              disabled={true}
               speed={3}
               className="custom-class"
             />

@@ -1,53 +1,70 @@
-import { useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "../CSS/AddPodcast.css";
+
 function AddPodcast() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
-  const [audio, setAudio] = useState(null);
-  const userId = "USER_ID_HERE"; // Replace this with actual user ID (from login session)
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
 
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("userId", userId);
-    if (image) formData.append("image", image);
-    if (audio) formData.append("audio", audio);
+    const formData = new FormData(event.target);
 
     try {
-      const response = await axios.post("http://localhost:3001/api/podcasts", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("https://test-podcast.onrender.com/addpodcast", {
+        method: "POST",
+        body: formData,
       });
-      console.log("Podcast Added:", response.data);
-      alert("Podcast added successfully!");
+
+      const result = await response.json();
+      setLoading(false);
+
+      if (result.success) {
+        alert("Podcast added successfully!");
+        event.target.reset(); 
+      } else {
+        alert("Failed to add podcast!");
+      }
     } catch (error) {
-      console.error("Error adding podcast:", error);
-      alert("Failed to add podcast.");
+      setLoading(false);
+      console.error("Error uploading podcast:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="add-podcast-container">
-      <h2>Add a New Podcast</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <label>Title:</label>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
+    <div className="Maindiv">
+      <div className="maindiv">
+        <h1 className="font">ADD YOUR PODCAST</h1>
 
-        <label>Description:</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+        <form onSubmit={handleSubmit}>
+          <div className="inputdiv">
+            <label htmlFor="title">Name Of Podcast:</label>
+            <input type="text" name="title" placeholder="Enter the Name..." required />
 
-        <label>Upload Image:</label>
-        <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} required />
+            <label htmlFor="description">Description:</label>
+            <input type="text" name="description" placeholder="Enter Description Of Podcast.." required />
 
-        <label>Upload Audio:</label>
-        <input type="file" accept="audio/*" onChange={(e) => setAudio(e.target.files[0])} required />
+            <label htmlFor="image">Upload Image:</label>
+            <input type="file" accept="image/*" name="image" required />
 
-        <button type="submit">Add Podcast</button>
-      </form>
+            <label htmlFor="audio">Upload Audio:</label>
+            <input type="file" name="audio" accept="audio/*" required />
+
+            <br />
+            <button type="submit" className="signuptag" disabled={loading}>
+              {loading ? "Uploading..." : "ADD PODCAST"}
+            </button>
+          </div>
+        </form>
+
+        <div className="logindiv">
+          <Link to="/libhome" className="Linktag">
+            Go To Home
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

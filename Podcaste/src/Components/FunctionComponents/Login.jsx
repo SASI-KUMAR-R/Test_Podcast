@@ -12,7 +12,7 @@ const Login = () => {
   const handlepage = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("https://podcaste-giuk.onrender.com/login", {
+      const response = await axios.post("https://test-podcast.onrender.com/login", {
         emailid: emailid,
         password: password,
       });
@@ -60,7 +60,7 @@ const Login = () => {
           <p>Don't have an account?</p>
           <br />
           <Link to="/signup" className="signupbtn">
-            SignUp
+            Go To SignUp
           </Link>
         </div>
       </div>
