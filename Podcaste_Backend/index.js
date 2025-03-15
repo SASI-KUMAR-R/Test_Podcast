@@ -101,7 +101,6 @@ app.post(
         return res.status(400).json({ message: "User not found" });
       }
 
-      // Save Podcast to DB
       const newPodcast = new Podcast({
         userid,
         title,
@@ -146,5 +145,4 @@ app.get("/getAllPodcasts", async (req, res) => {
   }
 });
 
-// Start Server
 app.listen(port, () => console.log(`Server started on port ${port}`));
