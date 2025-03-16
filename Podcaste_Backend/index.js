@@ -31,10 +31,7 @@ const upload = multer({ storage });
 app.post("/signup", async (req, res) => {
   try {
     const { username, emailid, password, phonenumber } = req.body;
-
-    // Hash the password
     const hashedPass = await bcrypt.hash(password, 10);
-
     const newSignup = new Signup({
       username,
       emailid,
@@ -51,7 +48,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// ---------------- LOGIN ROUTE (Returns userid) ----------------
+// ---------------- LOGIN ROUTE----------------
 app.post("/login", async (req, res) => {
   try {
     const { emailid, password } = req.body;
@@ -67,7 +64,7 @@ app.post("/login", async (req, res) => {
       return res.status(200).json({ 
         message: "LOGIN SUCCESS", 
         isLogin: true, 
-        userid: user._id  // ✅ Send userid to frontend
+        userid: user._id  
       });
     } else {
       return res.status(400).json({ message: "INVALID PASSWORD", isLogin: false });
