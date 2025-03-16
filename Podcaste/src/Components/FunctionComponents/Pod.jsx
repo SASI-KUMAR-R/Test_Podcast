@@ -19,7 +19,7 @@ function Pod() {
 
   return (
     <div>
-      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> {/* Pass state */}
+      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> 
       <div className="main">
         {filteredPodcasts.length > 0 ? (
           filteredPodcasts.map((key) => {

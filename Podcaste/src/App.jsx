@@ -9,8 +9,10 @@ import YourLibraryHome from "./Components/FunctionComponents/YourLibraryHome";
 import AddPodcast from "./Components/FunctionComponents/AddPodcast";
 import DeletePodcast from "./Components/FunctionComponents/DeletePodcast";
 import { UserProvider } from "./Components/FunctionComponents/UserContext";
+import UserPodcastDetail from "./Components/FunctionComponents/UserPodcastDetail";
 
-function App() {
+function App() 
+{
   return (
     <UserProvider> 
       <BrowserRouter>
@@ -24,6 +26,7 @@ function App() {
           <Route path="/libhome" element={<YourLibraryHome />} />
           <Route path="/addpod" element={<AddPodcast />} />
           <Route path="/deletepod" element={<DeletePodcast />} />
+          <Route path="/userdetail/:id" element={<UserPodcastDetail />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

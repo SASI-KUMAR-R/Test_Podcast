@@ -1,9 +1,21 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Retrieve user data from localStorage on initial load
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user)); // Store user data in localStorage
+    } else {
+      localStorage.removeItem("user"); // Remove user data if logged out
+    }
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -13,3 +25,4 @@ export const UserProvider = ({ children }) => {
 };
 
 export const useUser = () => useContext(UserContext);
+

@@ -7,7 +7,6 @@ const multer = require("multer");
 
 const app = express();
 const port = 3001;
-
 app.use(cors());
 dotenv.config();
 app.use(express.json());
@@ -104,16 +103,21 @@ app.post(
 );
 
 // ---------------- GET USER PODCASTS ----------------
-app.get("/getUserPodcasts/:userId", async (req, res) => {
+app.get("/getUserPodcast/:userId/:podcastId", async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId, podcastId } = req.params;
 
-    const podcasts = await Podcast.find({ userid: userId });
+    // Fetch podcast belonging to the specific user
+    const podcast = await Podcast.findOne({ _id: podcastId, userId: userId });
 
-    res.status(200).json(podcasts);
+    if (!podcast) {
+      return res.status(404).json({ message: "Podcast not found for this user" });
+    }
+
+    res.json(podcast);
   } catch (error) {
-    console.error("Error fetching user podcasts:", error);
-    res.status(500).json({ message: "Error fetching user podcasts" });
+    console.error("Error fetching podcast:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
