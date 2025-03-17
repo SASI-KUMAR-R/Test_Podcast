@@ -14,13 +14,13 @@ function YourLibraryHome() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!user || !user.userid) {
+      setError("User ID not found. Please log in.");
+      setLoading(false);
+      return;
+    }
+  
     const fetchUserPodcasts = async () => {
-      if (!user?.userid) {
-        setError("User ID not found. Please log in.");
-        setLoading(false);
-        return;
-      }
-
       try {
         const response = await axios.get(
           `https://test-podcast.onrender.com/getUserPodcasts/${user.userid}`
@@ -33,7 +33,7 @@ function YourLibraryHome() {
         setLoading(false);
       }
     };
-
+  
     fetchUserPodcasts();
   }, [user]);
 
